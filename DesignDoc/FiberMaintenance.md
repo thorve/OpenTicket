@@ -140,12 +140,6 @@ Type of impact for the maintenance. If the outage would be complete, intermitten
 
 `impact_type:enum value:"If this impact is primary or secondary for a planned maintenance." enumerations: ['COMPLETE_OUTAGE', 'POSSIBLE_OUTAGE', 'INTERMITTENT_OUTAGE']`
 
-### impact_type
-
-If the impact is primary/secondary. There might be multiple windows scheduled for a maintenance work and these could be for a single planned maintenance. This field distinguishes if a notification is for primary planned window or secondary days which might be backup for the same work.
-
-`impact_type:enum value:"Type of impact on service." enumerations: [PRIMARY, SECONDARY]`
-
 ### impact_satus
 
 Status of the work.
@@ -154,17 +148,11 @@ Status of the work.
 enumerations: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELED]
 `
 
-### impact_primary_id
+### impacts_related
 
-This is populated when the impact is associated to another impact. the value of primary impact_id.
+If there are other impacts related to the impact in notification, those could be listed here.
 
-`impact_primary_id:integer:"Impact ID of the primary work for the planned maintenance."`
-
-### impact_secondary_id
-
-This is populated when the impact_id has secondary impact_ids planned.
-
-`impact_secondary_id:list of integers:"Impact ID of the secondary work for the planned maintenance."`
+`impact_type:repeated int:"Impacts related to the impact in the notification."`
 
 ### physical_packet_link_info
 
@@ -225,6 +213,24 @@ close_code:enum value:"Close code of the maintenance work under the impact"
 enumerations: ['SERVICE_RESTORED', 'SERVICE_RESTORED_WITH_ISSUES', 'SERVICE_NOT_RESTORED', 'SERVICE_NOT_AFFECTED']
 
 `
+
+
+## Notification structure
+List of required fields for a notification
+
+For leased wave and fiber maintenance notification
+- maintenance_id
+- impact_id
+- impact_start_time
+- impact_end_time
+- impact_type
+- impact_status
+
+For leased wave notifications 
+- physical_packet_link_info.physical_packet_link_id
+
+For dark fiber notifications
+- ots_info.ots_id
 
 ### Fields' Table
 TBA
