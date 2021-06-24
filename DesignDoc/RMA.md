@@ -19,7 +19,7 @@ RMA case is raised by the consumer to request the replacement of the defective p
 1. Publisher notifies the failure analysis report to consumer
 ## Out of scope
 
-We would not be discussing the transport methodologies preferred for this notification message.
+We would not be discussing the replacement/maintainance details, and any internal support tickets related to the maintainance
 
 ## Stages of RMA Lifecycle
 
@@ -43,16 +43,16 @@ Note: One RMA case is dedicated to one part/module with one unique identifier, e
 ### Review/Approval 
 
 At this stage, Publisher will validate the required information for the RMA case, and approve / reject / request more information, which may include:
-   * whether any mandotary information is missing
-   * whether a kind of service level is supported for specific region
+   1. whether any mandotary information is missing
+   1. whether a kind of service level is supported for specific region
 
-### Part tracking
+### Part Tracking
 
 There are two seperate cases at this stage:
    1. Replacement shippment:
       1. Publisher will provide the shippment information, including carrier, planned arrive date 
       1. Publisher will notify the status of the replacement shippment and delivery
-   2. Defective part shippment:
+   1. Defective part shippment:
       1. Consumer will provide the shippment information, including carrier, planned arrive date 
       1. Publisher will notify the status of the replacement shippment and delivery
 
@@ -72,7 +72,7 @@ After Consumer ships the defective part to Publisher, publisher will collect the
 
 `field_name:field_type:description`
 
-### Part details 
+### Part Details 
 
 #### part_id
 
@@ -82,11 +82,13 @@ Indentifier of the defective part or the replacement
 #### part_type
 
 Replacement or defective part
+
 `part_type:enum value:"Part type" enumeration: [REPLACEMENT, DEFECTIVE_PART]`
 
 #### part_status
 
 whether the part is online or offline
+
 `part_status:enum value:"whether part is online or offline" enumeration: [ONLINE, OFFLINE]`
 
 ### Service Impact
@@ -94,13 +96,13 @@ whether the part is online or offline
 
 Type of impact for the defective part and the following replacement work. If the outage would be complete, intermittent or possible.
 
-`impact_type:enum value:"If this impact is primary or secondary for a planned maintenance." enumerations: ['COMPLETE_OUTAGE', 'POSSIBLE_OUTAGE', 'INTERMITTENT_OUTAGE']`
+`service_impact_type:enum value:"If this impact is primary or secondary for a planned maintenance." enumerations: ['COMPLETE_OUTAGE', 'POSSIBLE_OUTAGE', 'INTERMITTENT_OUTAGE']`
 
 #### service_impact_satus
 
 Status of the work.
 
-`impact_satus:enum value:"Status of the impact." enumerations: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELED] `
+`service_impact_satus:enum value:"Status of the impact." enumerations: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELED] `
 
 #### service_impacts_related
 
@@ -119,6 +121,7 @@ Identifier for a RMA case which dedicated to a part with a unique identifier.
 #### case_status
 
 RMA case status 
+
 `case_status:enum value:"stage of RMA case" enumeration: [OPEN, APPROVED, REJECTED]`
 
 
@@ -127,7 +130,9 @@ RMA case status
 Epoch time when the status is updated from Publisher, we have one specific time for each status listed in `case_status`
 
 `case_open_time:date time:"Unix epoch time when consumer starts to request the RMA"`
+
 `case_approved_time:date time:"Unix epoch time when publisher approve to request the RMA"`
+
 `case_rejected_time:date time:"Unix epoch time when publisher reject the RMA"`
 
 
@@ -165,11 +170,13 @@ Status of the failure analysis from the Publisher
 #### failure_analysis_result_type
 
 The result type of the failure analysis from Publisher, e.g., report, excel, email.
+
 `failure_analysis_result_type:enum value:"failure analysis result type" enumerations: ['REPORT', 'TBA']`
 
 #### failure_analysis_result_details
 
 The result type of the failure analysis from Publisher, e.g., report, excel, email.
+
 `failure_analysis_result_details:Depends on result type:"failure analysis result details dependes on the result type" `
 
 
@@ -178,10 +185,9 @@ The result type of the failure analysis from Publisher, e.g., report, excel, ema
 #### close_code
 Status of the RMA case closure. 
 
-` close_code:enum value:"Close code of the RMA case" enumerations: ['SUCCEED', 'INFORMATION_MISSING', 'INFORMATION_MISMATCH', 'PART_DELIVERY_FAILED', 'FAILURE_ANALYSIS_FAILED'] `
+`close_code:enum value:"Close code of the RMA case" enumerations: ['SUCCEED', 'INFORMATION_MISSING', 'INFORMATION_MISMATCH', 'PART_DELIVERY_FAILED', 'FAILURE_ANALYSIS_FAILED'] `
 
 TBD: two level close code? 
 
 ### Fields' Table
 TBA
-
