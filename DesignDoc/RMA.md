@@ -37,15 +37,18 @@ At this stage RMA(s) is raised by the Consumer, this might include:
 1. Consumer request for RMA from Publisher
 1. Request type for each customer (email, API, manual).
 
+
+Note: One RMA case is dedicated to one part/module with one unique identifier, e.g., serial number. Each RMA involves multiple communication messages between the publisher and consumer. Each RMA case has a unique ID.
+
 ### Review/Approval 
 
 At this stage, Publisher will validate the required information for the RMA case, and approve / reject / request more information, which may include:
    * whether any mandotary information is missing
    * whether a kind of service level is supported for specific region
 
-### Parts tracking 
+### Part tracking
 
-There are two seperate flows at this stage:
+There are two seperate cases at this stage:
    1. Replacement shippment:
       1. Publisher will provide the shippment information, including carrier, planned arrive date 
       1. Publisher will notify the status of the replacement shippment and delivery
@@ -53,24 +56,65 @@ There are two seperate flows at this stage:
       1. Consumer will provide the shippment information, including carrier, planned arrive date 
       1. Publisher will notify the status of the replacement shippment and delivery
 
-### Notification
+### Techician Schedule  (Optional)
 
-One RMA case is dedicated to one part with one unique identifier, e.g., serial number. Each RMA involves multiple communication messages between the publisher and consumer. Each RMA case has a unique ID.
+Technician dispatch may be needed for un-manned sites
 
-## Notification structure
+TBA
+### Failure Analysis 
+
+After Consumer ships the defective part to Publisher, publisher will collect the information and analyze the root cause of the part failure.
+
+
+## Message structure
 
 ### General format
 
 `field_name:field_type:description`
 
-### Field Details
+### Part details 
 
+#### part_id
+
+Indentifier of the defective part or the replacement
+
+`part_id:string:"Part id" `
+#### part_type
+
+Replacement or defective part
+`part_type:enum value:"Part type" enumeration: [REPLACEMENT, DEFECTIVE_PART]`
+
+#### part_status
+
+whether the part is online or offline
+`part_status:enum value:"whether part is online or offline" enumeration: [ONLINE, OFFLINE]`
+
+### Service Impact
+#### service_impact_type
+
+Type of impact for the defective part and the following replacement work. If the outage would be complete, intermittent or possible.
+
+`impact_type:enum value:"If this impact is primary or secondary for a planned maintenance." enumerations: ['COMPLETE_OUTAGE', 'POSSIBLE_OUTAGE', 'INTERMITTENT_OUTAGE']`
+
+#### service_impact_satus
+
+Status of the work.
+
+`impact_satus:enum value:"Status of the impact." enumerations: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELED] `
+
+#### service_impacts_related
+
+If there are other impacts related to the impact in notification, those could be listed here.
+
+`service_impacts_related:string:"Impacts related to the impact in the RMA case"`
+
+
+#### Case details
 #### case_id
 
 Identifier for a RMA case which dedicated to a part with a unique identifier. 
 
 `case_id:string:"RMA case identifier"`
-
 
 #### case_status
 
@@ -86,119 +130,57 @@ Epoch time when the status is updated from Publisher, we have one specific time 
 `case_approved_time:date time:"Unix epoch time when publisher approve to request the RMA"`
 `case_rejected_time:date time:"Unix epoch time when publisher reject the RMA"`
 
+
+#### Part Shippment Details 
+#### part_shippment_address
+
+Replacement / defective part shippment status
+
+`part_shippment_address:string value:"shippment address"`
+
 #### part_shippment_status 
 
 Replacement / defective part shippment status
 
-`service_type:enum value:"Type of service: leased wave/dark fiber" enumeration: [LEASED_WAVE, DARK_FIBER]`
-
-#### part_type
-
-Replacement or defective parts
-
-#### service_impact
-
-Type of impact caused on the service because of the planned work.
-
-`service_impact:enum value:"Type of service impact." enumerations: [COMPLETE_OUTAGE, POSSIBLE_OUTAGE, INTERMITTENT_OUTAGE]`
-
-### impact_type
-
-Type of impact for the maintenance. If the outage would be complete, intermittent or possible.
-
-`impact_type:enum value:"If this impact is primary or secondary for a planned maintenance." enumerations: ['COMPLETE_OUTAGE', 'POSSIBLE_OUTAGE', 'INTERMITTENT_OUTAGE']`
-
-### impact_satus
-
-Status of the work.
-
-`impact_satus:enum value:"Status of the impact." 
-enumerations: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELED]
-`
-
-### impacts_related
-
-If there are other impacts related to the impact in notification, those could be listed here.
-
-`impact_type:repeated int:"Impacts related to the impact in the notification."`
-
-### physical_packet_link_info
-
-Physical packet link affected because of the change, this is for leased wave notifications.
-
-#### physical_packet_link_id
-
-Circuit ID of a link. ID could be stored independently at consumer and publisher. It would be ideal to have these matching between the two, but not necessary.
-
-`physical_packet_link_id:string:"Circuit identifying router port endpoints"`
-
-#### affected_capacity
-
-Link capacity (bps) affected because of the work.
-
-`affected_capacity:integer:"Affected traffic in bps"`
-
-### physical_packet_links_info
-
-If multiple links are affected because of the change, this field collects them together.
-
-` physical_packet_link_info:list of physical_packet_link_info:""
-
-`
-
-### ots_info
-
-Information regarding the Optical Transport Section. This is populated for a fiber maintenance.
-
-#### ots_id
-
-Fiber strand identifier.
-
-`ots_id:string:"Identifier for Optical Transport Section."`
-
-### ots_affected
-
-`ots_affected:repeated ots_info:"OTS affected because of the maintenance window."`
-
-### oms_info
-
-OMS information.
-
-#### oms_id
-
-OMS Identifier. `oms_id:string:"Identifier for Optical Multiplexing Section"`
-
-#### oms_affected
-
-oms_affected:list of oms_info:"OMS details regarding the maintenance"
-
-### close_code
-
-Status of the maintenance work closure.
-
-` 
-close_code:enum value:"Close code of the maintenance work under the impact" 
-enumerations: ['SERVICE_RESTORED', 'SERVICE_RESTORED_WITH_ISSUES', 'SERVICE_NOT_RESTORED', 'SERVICE_NOT_AFFECTED']
-
-`
+`part_shippment_status:enum value:"shippment status of the part" enumeration: [SHIPPED, DELIVERED]`
 
 
-## Notification structure
-List of required fields for a notification
+### Technician Dispatch Details 
 
-For leased wave and fiber maintenance notification
-- maintenance_id
-- impact_id
-- impact_start_time
-- impact_end_time
-- impact_type
-- impact_status
+TBA
 
-For leased wave notifications 
-- physical_packet_link_info.physical_packet_link_id
+### Failure analysis
+#### failure_analysis_id
 
-For dark fiber notifications
-- ots_info.ots_id
+Indentifier for the failure analysis from the Publisher, unique ID for each RMA case
+
+`failure_analysis_id:Integer:"indentifier for the failure analysis"`
+
+#### failure_analysis_status
+
+Status of the failure analysis from the Publisher 
+
+`failure_analysis_status:enum value:"failure analysis status" enumerations: ['INITIATED', 'NEED_INFORMATION', 'IN_PROGRESS', 'DONE']`
+
+#### failure_analysis_result_type
+
+The result type of the failure analysis from Publisher, e.g., report, excel, email.
+`failure_analysis_result_type:enum value:"failure analysis result type" enumerations: ['REPORT', 'TBA']`
+
+#### failure_analysis_result_details
+
+The result type of the failure analysis from Publisher, e.g., report, excel, email.
+`failure_analysis_result_details:Depends on result type:"failure analysis result details dependes on the result type" `
+
+
+### Close  
+
+#### close_code
+Status of the RMA case closure. 
+
+` close_code:enum value:"Close code of the RMA case" enumerations: ['SUCCEED', 'INFORMATION_MISSING', 'INFORMATION_MISMATCH', 'PART_DELIVERY_FAILED', 'FAILURE_ANALYSIS_FAILED'] `
+
+TBD: two level close code? 
 
 ### Fields' Table
 TBA
