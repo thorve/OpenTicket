@@ -76,7 +76,7 @@ After Consumer ships the defective part to Publisher, publisher will collect the
 
 #### part_id
 
-Indentifier of the defective part or the replacement
+Indentifier of the defective part or the replacement, e.g., serial number
 
 `part_id:string:"Part id" `
 #### part_type
@@ -111,7 +111,7 @@ If there are other impacts related to the impact in notification, those could be
 `service_impacts_related:string:"Impacts related to the impact in the RMA case"`
 
 
-#### Case details
+#### Case Details
 #### case_id
 
 Identifier for a RMA case which dedicated to a part with a unique identifier. 
@@ -152,7 +152,7 @@ Replacement / defective part shippment status
 
 ### Technician Dispatch Details 
 
-TBA
+TBA, but we can share the same process with the Fiber Maintainance flow
 
 ### Failure analysis
 #### failure_analysis_id
