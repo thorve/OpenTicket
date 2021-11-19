@@ -12,11 +12,19 @@ Structure for RMA process.
 ## Features 
 
 RMA case is raised by the consumer to request the replacement of the defective parts. It consists of the following subflows:
-1. Consumer starts to request the RMA from the Publisher, and wait for the review/approval from the publisher
+
+1. Consumer starts to request the RMA from Publisher
+1. Consumer waits for the review from the Publisher
+1. Consumer responds any pending review request from the Publisher till RMA is approved
+1. Publisher approves the RMA request
+1. Consumer waits for RMA shipment update from the Publisher
 1. Publisher ships the replacement, and notify the consumer about the shipment status of the replacement
+1. Consumer triggers internal processes to receive shipped RMA part.
+1. Consumer completes the RMA work with internal processes.
 1. Consumer request techincial dispatch/schedule if needed
 1. Consumer ships the defective part for failure analysis, and notify the consumer about the shipment status of the defective parts
 1. Publisher notifies the failure analysis report to consumer
+
 ## Out of scope
 
 We would not be discussing the replacement/maintainance details, and any internal support tickets related to the maintainance
@@ -60,7 +68,6 @@ There are two seperate cases at this stage:
 
 Technician dispatch may be needed for un-manned sites
 
-TBA
 ### Failure Analysis 
 
 After Consumer ships the defective part to Publisher, publisher will collect the information and analyze the root cause of the part failure.
@@ -91,30 +98,31 @@ whether the part is online or offline
 
 `part_status:enum value:"whether part is online or offline" enumeration: [ONLINE, OFFLINE]`
 
-### Service Impact
-#### service_impact_type
 
-Type of impact for the defective part and the following replacement work. If the outage would be complete, intermittent or possible.
+### Problem Details
 
-`service_impact_type:enum value:"If this impact is primary or secondary for a planned maintenance." enumerations: ['COMPLETE_OUTAGE', 'POSSIBLE_OUTAGE', 'INTERMITTENT_OUTAGE']`
+#### problem_description
+Problem summary of the failed part from the Consumer
 
-#### service_impact_satus
+`problem_description:string value:"Problem summary"`
 
-Status of the work.
+#### service_type
 
-`service_impact_satus:enum value:"Status of the impact." enumerations: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELED] `
+whether the part failure affects the service from the Consumer
 
-#### service_impacts_related
+`service_type:enum value:"service type of the part" enumeration: [IN_SERVICE, NOT_IN_SERVICE]`
 
-If there are other impacts related to the impact in notification, those could be listed here.
+#### service_impact_time
 
-`service_impacts_related:string:"Impacts related to the impact in the RMA case"`
+when the service start to impacted the service from the Consumer 
+
+`service_impact_time:date time:"Unix epoch time when the service is impacted by the part failure"`
 
 
-#### Case Details
+### Case Details
 #### case_id
 
-Identifier for a RMA case which dedicated to a part with a unique identifier. 
+Identifier for a RMA case. 
 
 `case_id:string:"RMA case identifier"`
 
@@ -123,7 +131,6 @@ Identifier for a RMA case which dedicated to a part with a unique identifier.
 RMA case status 
 
 `case_status:enum value:"stage of RMA case" enumeration: [OPEN, APPROVED, REJECTED]`
-
 
 #### case_status_time
 
@@ -134,7 +141,6 @@ Epoch time when the status is updated from Publisher, we have one specific time 
 `case_approved_time:date time:"Unix epoch time when publisher approve to request the RMA"`
 
 `case_rejected_time:date time:"Unix epoch time when publisher reject the RMA"`
-
 
 #### Part Shippment Details 
 #### part_shippment_address
@@ -147,14 +153,15 @@ Replacement / defective part shippment status
 
 Replacement / defective part shippment status
 
-`part_shippment_status:enum value:"shippment status of the part" enumeration: [SHIPPED, DELIVERED]`
+`part_shippment_status:enum value:"shippment status of the part" enumeration: [INITIATED, SHIPPED, DELIVERED]`
 
 
 ### Technician Dispatch Details 
 
-TBA, but we can share the same process with the Fiber Maintainance flow
+Keep consistent with Fiber Maintainance Flow 
 
 ### Failure analysis
+
 #### failure_analysis_id
 
 Indentifier for the failure analysis from the Publisher, unique ID for each RMA case
@@ -171,23 +178,18 @@ Status of the failure analysis from the Publisher
 
 The result type of the failure analysis from Publisher, e.g., report, excel, email.
 
-`failure_analysis_result_type:enum value:"failure analysis result type" enumerations: ['REPORT', 'TBA']`
+`failure_analysis_result_type:enum value:"failure analysis result type" enumerations: ['REPORT', 'EMAIL']`
 
 #### failure_analysis_result_details
 
-The result type of the failure analysis from Publisher, e.g., report, excel, email.
+The failure analysis details from from Publisher, including failure code, root cause, impact analysis etc.
 
 `failure_analysis_result_details:Depends on result type:"failure analysis result details dependes on the result type" `
 
 
-### Close  
+### Case Close  
 
 #### close_code
 Status of the RMA case closure. 
 
 `close_code:enum value:"Close code of the RMA case" enumerations: ['SUCCEED', 'INFORMATION_MISSING', 'INFORMATION_MISMATCH', 'PART_DELIVERY_FAILED', 'FAILURE_ANALYSIS_FAILED'] `
-
-TBD: two level close code? 
-
-### Fields' Table
-TBA
